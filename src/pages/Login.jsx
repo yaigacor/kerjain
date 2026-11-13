@@ -22,15 +22,15 @@ export default function Login() {
 
   return (
     <div className="min-h-[calc(100vh-60px)] flex items-center justify-center px-4 py-10 relative overflow-hidden">
-      {/* BG orbs */}
+      
       <div style={{ position:'absolute', top:-200, left:-200, width:600, height:600, borderRadius:'50%', background:'radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%)', pointerEvents:'none' }} />
       <div style={{ position:'absolute', bottom:-200, right:-200, width:500, height:500, borderRadius:'50%', background:'radial-gradient(circle, rgba(6,214,160,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
       <div className="grid-pattern absolute inset-0 opacity-20" />
 
       <div className="w-full max-w-md relative fade-up">
-        {/* Card */}
+        
         <div className="glass-strong rounded-3xl p-8 sm:p-10" style={{ boxShadow:'0 30px 80px rgba(0,0,0,0.5)' }}>
-          {/* Logo */}
+
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center gap-1 font-black text-2xl">
               <span style={{ background:'linear-gradient(135deg,#a855f7,#7c3aed)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Kerja</span>
@@ -42,7 +42,7 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Error */}
+
             {error && (
               <div className="flex items-start gap-2.5 p-3.5 rounded-xl text-sm font-medium"
                 style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.25)', color:'#fca5a5' }}>
@@ -53,13 +53,13 @@ export default function Login() {
               </div>
             )}
 
-            {/* Email */}
+
             <div>
               <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Email</label>
               <input className="input-dark" type="email" placeholder="nama@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
 
-            {/* Password */}
+
             <div>
               <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Password</label>
               <div className="relative">

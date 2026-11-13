@@ -22,14 +22,12 @@ export default function Register() {
 
   return (
     <div className="min-h-[calc(100vh-60px)] flex items-center justify-center px-4 py-10 relative overflow-hidden">
-      {/* BG orbs */}
       <div style={{ position:'absolute', top:-250, right:-150, width:600, height:600, borderRadius:'50%', background:'radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%)', pointerEvents:'none' }} />
       <div style={{ position:'absolute', bottom:-200, left:-200, width:500, height:500, borderRadius:'50%', background:'radial-gradient(circle, rgba(6,214,160,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
       <div className="grid-pattern absolute inset-0 opacity-20" />
 
       <div className="w-full max-w-md relative fade-up">
         <div className="glass-strong rounded-3xl p-8 sm:p-10" style={{ boxShadow:'0 30px 80px rgba(0,0,0,0.5)' }}>
-          {/* Logo */}
           <div className="text-center mb-7">
             <Link to="/" className="inline-flex items-center gap-1 font-black text-2xl">
               <span style={{ background:'linear-gradient(135deg,#a855f7,#7c3aed)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Kerja</span>
@@ -40,11 +38,10 @@ export default function Register() {
             <p className="text-slate-500 text-sm mt-1.5">Bergabung dan mulai karier terbaikmu</p>
           </div>
 
-          {/* Role Toggle */}
           <div className="flex p-1 rounded-xl mb-6" style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)' }}>
             {[
-              { key: 'pencari_kerja', label: '👤 Pencari Kerja' },
-              { key: 'perusahaan', label: '🏢 Perusahaan' },
+              { key: 'pencari_kerja', label: ' Pencari Kerja' },
+              { key: 'perusahaan', label: 'Perusahaan' },
             ].map(opt => (
               <button
                 key={opt.key}
