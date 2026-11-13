@@ -21,6 +21,9 @@ export default function Navbar() {
     ? { to: '/admin', label: 'Admin Panel' }
     : null
 
+  // Tautan "Lowongan" hanya untuk pengunjung dan pencari kerja
+  const showBrowse = !user || profile?.role === 'pencari_kerja'
+
   return (
     <nav className="nav-blur sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-5 py-3.5 flex items-center gap-6">
@@ -33,9 +36,11 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden sm:flex items-center gap-1 flex-1">
-          <Link to="/" className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition-all">
-            Lowongan
-          </Link>
+          {showBrowse && (
+            <Link to="/" className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition-all">
+              Lowongan
+            </Link>
+          )}
           {roleLink && (
             <Link to={roleLink.to} className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition-all">
               {roleLink.label}
@@ -93,7 +98,9 @@ export default function Navbar() {
     
       {menuOpen && (
         <div className="sm:hidden border-t px-5 py-4 space-y-2" style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(7,8,15,0.97)' }}>
-          <Link to="/" onClick={() => setMenuOpen(false)} className="block py-2.5 px-4 text-sm font-semibold text-slate-300 hover:text-white rounded-xl hover:bg-white/5">Lowongan</Link>
+          {showBrowse && (
+            <Link to="/" onClick={() => setMenuOpen(false)} className="block py-2.5 px-4 text-sm font-semibold text-slate-300 hover:text-white rounded-xl hover:bg-white/5">Lowongan</Link>
+          )}
           {roleLink && (
             <Link to={roleLink.to} onClick={() => setMenuOpen(false)} className="block py-2.5 px-4 text-sm font-semibold text-slate-300 hover:text-white rounded-xl hover:bg-white/5">{roleLink.label}</Link>
           )}
