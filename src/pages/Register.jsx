@@ -2,22 +2,74 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+// Ubah angka ini kalau aturan minimalnya mau diganti
+const NAMA_MIN = 3
+const PASSWORD_MIN = 8
+
+function validate(form, confirm) {
+  const errors = {}
+
+  const nama = form.nama.trim()
+  if (!nama) errors.nama = 'Nama wajib diisi'
+  else if (nama.length < NAMA_MIN) errors.nama = `Nama minimal ${NAMA_MIN} karakter`
+  else if (!/^[\p{L}\s.'-]+$/u.test(nama)) errors.nama = 'Nama hanya boleh berisi huruf dan spasi'
+
+  const email = form.email.trim()
+  if (!email) errors.email = 'Email wajib diisi'
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = 'Format email tidak valid'
+
+  if (!form.password) errors.password = 'Password wajib diisi'
+  else if (form.password.length < PASSWORD_MIN) errors.password = `Password minimal ${PASSWORD_MIN} karakter`
+  else if (!/[A-Za-z]/.test(form.password) || !/\d/.test(form.password)) errors.password = 'Password harus mengandung huruf dan angka'
+
+  if (!confirm) errors.confirm = 'Ulangi password kamu'
+  else if (confirm !== form.password) errors.confirm = 'Password tidak sama'
+
+  return errors
+}
+
+function translateError(msg = '') {
+  if (/already registered|already been registered/i.test(msg)) return 'Email sudah terdaftar. Silakan masuk.'
+  if (/failed to fetch|network/i.test(msg)) return 'Tidak dapat terhubung ke server. Periksa koneksi internet, lalu coba lagi.'
+  if (/rate limit/i.test(msg)) return 'Terlalu banyak percobaan. Coba lagi beberapa saat.'
+  return msg
+}
+
+const ERR_STYLE = { borderColor: 'rgba(239,68,68,0.6)' }
+
+function FieldError({ children }) {
+  if (!children) return null
+  return <p className="text-xs mt-1.5 font-medium" style={{ color: '#fca5a5' }}>{children}</p>
+}
+
 export default function Register() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
   const [form, setForm] = useState({ nama: '', email: '', password: '', role: 'pencari_kerja' })
+  const [confirm, setConfirm] = useState('')
+  const [touched, setTouched] = useState({})
+  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [showPass, setShowPass] = useState(false)
+
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+  const blur = (k) => () => setTouched(t => ({ ...t, [k]: true }))
+
+  const errors = validate(form, confirm)
+  // Pesan error baru tampil setelah kolom disentuh atau setelah tombol ditekan
+  const show = (k) => (touched[k] || submitted) ? errors[k] : ''
 
   async function handleSubmit(e) {
     e.preventDefault()
-    setBusy(true); setError('')
-    const { error } = await signUp(form.email, form.password, form.nama, form.role)
+    setSubmitted(true); setError('')
+    if (Object.keys(errors).length > 0) return
+
+    setBusy(true)
+    const { error } = await signUp(form.email.trim().toLowerCase(), form.password, form.nama.trim(), form.role)
     setBusy(false)
-    if (error) setError(error.message)
-    else navigate('/')
+    if (error) setError(translateError(error.message))
+    else navigate(form.role === 'perusahaan' ? '/perusahaan' : '/')
   }
 
   return (
@@ -40,7 +92,7 @@ export default function Register() {
 
           <div className="flex p-1 rounded-xl mb-6" style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)' }}>
             {[
-              { key: 'pencari_kerja', label: ' Pencari Kerja' },
+              { key: 'pencari_kerja', label: 'Pencari Kerja' },
               { key: 'perusahaan', label: 'Perusahaan' },
             ].map(opt => (
               <button
@@ -58,7 +110,7 @@ export default function Register() {
             ))}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {error && (
               <div className="flex items-start gap-2.5 p-3.5 rounded-xl text-sm font-medium"
                 style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.25)', color:'#fca5a5' }}>
@@ -73,18 +125,43 @@ export default function Register() {
               <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">
                 {form.role === 'perusahaan' ? 'Nama PIC' : 'Nama Lengkap'}
               </label>
-              <input className="input-dark" placeholder={form.role === 'perusahaan' ? 'Nama perwakilan' : 'Nama lengkapmu'} value={form.nama} onChange={set('nama')} required />
+              <input
+                className="input-dark"
+                style={show('nama') ? ERR_STYLE : undefined}
+                placeholder={form.role === 'perusahaan' ? 'Nama perwakilan' : 'Nama lengkapmu'}
+                value={form.nama}
+                onChange={set('nama')}
+                onBlur={blur('nama')}
+              />
+              <FieldError>{show('nama')}</FieldError>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Email</label>
-              <input className="input-dark" type="email" placeholder="nama@email.com" value={form.email} onChange={set('email')} required />
+              <input
+                className="input-dark"
+                style={show('email') ? ERR_STYLE : undefined}
+                type="email"
+                placeholder="nama@email.com"
+                value={form.email}
+                onChange={set('email')}
+                onBlur={blur('email')}
+              />
+              <FieldError>{show('email')}</FieldError>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Password</label>
               <div className="relative">
-                <input className="input-dark" style={{ paddingRight:48 }} type={showPass ? 'text' : 'password'} placeholder="Min. 6 karakter" minLength={6} value={form.password} onChange={set('password')} required />
+                <input
+                  className="input-dark"
+                  style={{ paddingRight: 48, ...(show('password') ? ERR_STYLE : {}) }}
+                  type={showPass ? 'text' : 'password'}
+                  placeholder={`Min. ${PASSWORD_MIN} karakter, huruf dan angka`}
+                  value={form.password}
+                  onChange={set('password')}
+                  onBlur={blur('password')}
+                />
                 <button type="button" onClick={() => setShowPass(!showPass)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
                   {showPass
@@ -93,6 +170,21 @@ export default function Register() {
                   }
                 </button>
               </div>
+              <FieldError>{show('password')}</FieldError>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Ulangi Password</label>
+              <input
+                className="input-dark"
+                style={show('confirm') ? ERR_STYLE : undefined}
+                type={showPass ? 'text' : 'password'}
+                placeholder="Ketik ulang password"
+                value={confirm}
+                onChange={e => setConfirm(e.target.value)}
+                onBlur={blur('confirm')}
+              />
+              <FieldError>{show('confirm')}</FieldError>
             </div>
 
             <button
