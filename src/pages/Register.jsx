@@ -2,95 +2,48 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-// Ubah angka ini kalau aturan minimalnya mau diganti
-const NAMA_MIN = 3
-const PASSWORD_MIN = 8
-
-function validate(form, confirm) {
-  const errors = {}
-
-  const nama = form.nama.trim()
-  if (!nama) errors.nama = 'Nama wajib diisi'
-  else if (nama.length < NAMA_MIN) errors.nama = `Nama minimal ${NAMA_MIN} karakter`
-  else if (!/^[\p{L}\s.'-]+$/u.test(nama)) errors.nama = 'Nama hanya boleh berisi huruf dan spasi'
-
-  const email = form.email.trim()
-  if (!email) errors.email = 'Email wajib diisi'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = 'Format email tidak valid'
-
-  if (!form.password) errors.password = 'Password wajib diisi'
-  else if (form.password.length < PASSWORD_MIN) errors.password = `Password minimal ${PASSWORD_MIN} karakter`
-  else if (!/[A-Za-z]/.test(form.password) || !/\d/.test(form.password)) errors.password = 'Password harus mengandung huruf dan angka'
-
-  if (!confirm) errors.confirm = 'Ulangi password kamu'
-  else if (confirm !== form.password) errors.confirm = 'Password tidak sama'
-
-  return errors
-}
-
-function translateError(msg = '') {
-  if (/already registered|already been registered/i.test(msg)) return 'Email sudah terdaftar. Silakan masuk.'
-  if (/failed to fetch|network/i.test(msg)) return 'Tidak dapat terhubung ke server. Periksa koneksi internet, lalu coba lagi.'
-  if (/rate limit/i.test(msg)) return 'Terlalu banyak percobaan. Coba lagi beberapa saat.'
-  return msg
-}
-
-const ERR_STYLE = { borderColor: 'rgba(239,68,68,0.6)' }
-
-function FieldError({ children }) {
-  if (!children) return null
-  return <p className="text-xs mt-1.5 font-medium" style={{ color: '#fca5a5' }}>{children}</p>
-}
-
 export default function Register() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
   const [form, setForm] = useState({ nama: '', email: '', password: '', role: 'pencari_kerja' })
-  const [confirm, setConfirm] = useState('')
-  const [touched, setTouched] = useState({})
-  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [showPass, setShowPass] = useState(false)
-
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
-  const blur = (k) => () => setTouched(t => ({ ...t, [k]: true }))
-
-  const errors = validate(form, confirm)
-  // Pesan error baru tampil setelah kolom disentuh atau setelah tombol ditekan
-  const show = (k) => (touched[k] || submitted) ? errors[k] : ''
 
   async function handleSubmit(e) {
     e.preventDefault()
-    setSubmitted(true); setError('')
-    if (Object.keys(errors).length > 0) return
-
-    setBusy(true)
-    const { error } = await signUp(form.email.trim().toLowerCase(), form.password, form.nama.trim(), form.role)
+    setBusy(true); setError('')
+    const { error } = await signUp(form.email, form.password, form.nama, form.role)
     setBusy(false)
-    if (error) setError(translateError(error.message))
-    else navigate(form.role === 'perusahaan' ? '/perusahaan' : '/')
+    if (error) setError(error.message)
+    else navigate('/')
   }
 
   return (
-    <div className="min-h-[calc(100vh-60px)] flex items-center justify-center px-4 py-10 relative overflow-hidden">
-      <div style={{ position:'absolute', top:-250, right:-150, width:600, height:600, borderRadius:'50%', background:'radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%)', pointerEvents:'none' }} />
-      <div style={{ position:'absolute', bottom:-200, left:-200, width:500, height:500, borderRadius:'50%', background:'radial-gradient(circle, rgba(6,214,160,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
-      <div className="grid-pattern absolute inset-0 opacity-20" />
+    <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 py-10 relative">
+      {/* Subtle glow */}
+      <div style={{
+        position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)',
+        width: '600px', height: '400px', borderRadius: '50%',
+        background: 'radial-gradient(ellipse, rgba(16,185,129,0.04) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
 
-      <div className="w-full max-w-md relative fade-up">
-        <div className="glass-strong rounded-3xl p-8 sm:p-10" style={{ boxShadow:'0 30px 80px rgba(0,0,0,0.5)' }}>
+      <div className="w-full max-w-sm relative fade-up">
+        <div className="card-elevated p-8">
+          {/* Logo */}
           <div className="text-center mb-7">
-            <Link to="/" className="inline-flex items-center gap-1 font-black text-2xl">
-              <span style={{ background:'linear-gradient(135deg,#a855f7,#7c3aed)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Kerja</span>
-              <span style={{ background:'linear-gradient(135deg,#06d6a0,#00f5c4)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>in</span>
-              <span className="text-white">.</span>
+            <Link to="/" className="inline-block font-bold text-xl tracking-tight">
+              <span className="text-white">Kerjain</span>
+              <span style={{ color: '#10b981' }}>.</span>
             </Link>
-            <h1 className="text-xl font-black text-white mt-4">Buat Akun Baru</h1>
-            <p className="text-slate-500 text-sm mt-1.5">Bergabung dan mulai karier terbaikmu</p>
+            <h1 className="text-lg font-bold text-white mt-4">Buat Akun Baru</h1>
+            <p className="text-neutral-600 text-sm mt-1">Mulai perjalanan kariermu</p>
           </div>
 
-          <div className="flex p-1 rounded-xl mb-6" style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)' }}>
+          {/* Role Toggle */}
+          <div className="flex p-1 rounded-xl mb-6" style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.06)' }}>
             {[
               { key: 'pencari_kerja', label: 'Pencari Kerja' },
               { key: 'perusahaan', label: 'Perusahaan' },
@@ -99,10 +52,10 @@ export default function Register() {
                 key={opt.key}
                 type="button"
                 onClick={() => setForm({ ...form, role: opt.key })}
-                className="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all"
+                className="flex-1 py-2 text-sm font-medium rounded-lg transition-all"
                 style={form.role === opt.key
-                  ? { background:'linear-gradient(135deg,rgba(124,58,237,0.4),rgba(168,85,247,0.3))', color:'#c4b5fd', border:'1px solid rgba(124,58,237,0.5)', boxShadow:'0 0 20px rgba(124,58,237,0.2)' }
-                  : { color:'#475569', border:'1px solid transparent' }
+                  ? { background: 'rgba(255,255,255,0.08)', color: '#f5f5f5', border: '1px solid rgba(255,255,255,0.1)' }
+                  : { color: '#525252', border: '1px solid transparent' }
                 }
               >
                 {opt.label}
@@ -110,87 +63,47 @@ export default function Register() {
             ))}
           </div>
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="flex items-start gap-2.5 p-3.5 rounded-xl text-sm font-medium"
-                style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.25)', color:'#fca5a5' }}>
-                <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {error}
+              <div className="flex items-start gap-2 p-3 rounded-lg text-sm font-medium"
+                style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#f87171' }}>
+                <span className="shrink-0 mt-0.5">!</span>
+                <span>{error}</span>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">
+              <label className="block text-xs font-medium text-neutral-500 mb-2">
                 {form.role === 'perusahaan' ? 'Nama PIC' : 'Nama Lengkap'}
               </label>
-              <input
-                className="input-dark"
-                style={show('nama') ? ERR_STYLE : undefined}
-                placeholder={form.role === 'perusahaan' ? 'Nama perwakilan' : 'Nama lengkapmu'}
-                value={form.nama}
-                onChange={set('nama')}
-                onBlur={blur('nama')}
-              />
-              <FieldError>{show('nama')}</FieldError>
+              <input className="input-dark" placeholder={form.role === 'perusahaan' ? 'Nama perwakilan' : 'Nama lengkapmu'} value={form.nama} onChange={set('nama')} required />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Email</label>
-              <input
-                className="input-dark"
-                style={show('email') ? ERR_STYLE : undefined}
-                type="email"
-                placeholder="nama@email.com"
-                value={form.email}
-                onChange={set('email')}
-                onBlur={blur('email')}
-              />
-              <FieldError>{show('email')}</FieldError>
+              <label className="block text-xs font-medium text-neutral-500 mb-2">Email</label>
+              <input className="input-dark" type="email" placeholder="nama@email.com" value={form.email} onChange={set('email')} required />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Password</label>
+              <label className="block text-xs font-medium text-neutral-500 mb-2">Password</label>
               <div className="relative">
-                <input
-                  className="input-dark"
-                  style={{ paddingRight: 48, ...(show('password') ? ERR_STYLE : {}) }}
-                  type={showPass ? 'text' : 'password'}
-                  placeholder={`Min. ${PASSWORD_MIN} karakter, huruf dan angka`}
-                  value={form.password}
-                  onChange={set('password')}
-                  onBlur={blur('password')}
-                />
+                <input className="input-dark" style={{ paddingRight: 44 }} type={showPass ? 'text' : 'password'} placeholder="Min. 6 karakter" minLength={6} value={form.password} onChange={set('password')} required />
                 <button type="button" onClick={() => setShowPass(!showPass)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
-                  {showPass
-                    ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                    : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-neutral-400 transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {showPass
+                      ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      : <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></>
+                    }
+                  </svg>
                 </button>
               </div>
-              <FieldError>{show('password')}</FieldError>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Ulangi Password</label>
-              <input
-                className="input-dark"
-                style={show('confirm') ? ERR_STYLE : undefined}
-                type={showPass ? 'text' : 'password'}
-                placeholder="Ketik ulang password"
-                value={confirm}
-                onChange={e => setConfirm(e.target.value)}
-                onBlur={blur('confirm')}
-              />
-              <FieldError>{show('confirm')}</FieldError>
             </div>
 
             <button
               disabled={busy}
-              className="btn-electric w-full mt-2 flex items-center justify-center gap-2"
-              style={{ padding:'14px', borderRadius:14 }}
+              className="btn-accent w-full mt-2 flex items-center justify-center gap-2"
+              style={{ padding: '12px' }}
             >
               {busy ? (
                 <>
@@ -199,13 +112,13 @@ export default function Register() {
                   </svg>
                   Memproses...
                 </>
-              ) : 'Buat Akun Sekarang →'}
+              ) : 'Buat Akun'}
             </button>
           </form>
 
-          <p className="text-center text-slate-500 text-sm mt-6">
+          <p className="text-center text-neutral-600 text-sm mt-6">
             Sudah punya akun?{' '}
-            <Link to="/login" className="font-black" style={{ color:'#06d6a0' }}>Masuk</Link>
+            <Link to="/login" className="font-semibold text-white hover:text-emerald-400 transition-colors">Masuk</Link>
           </p>
         </div>
       </div>
