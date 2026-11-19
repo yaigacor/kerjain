@@ -4,9 +4,9 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 
 const STATUS_CONFIG = {
-  dikirim:   { bg: '#1a1a1a', color: '#737373', icon: '📤', label: 'Dikirim',    dot: '#525252' },
-  dilihat:   { bg: 'rgba(251,191,36,0.08)', color: '#fbbf24', icon: '👀', label: 'Dilihat',    dot: '#fbbf24' },
-  wawancara: { bg: 'rgba(59,130,246,0.08)', color: '#60a5fa', icon: '🎙️', label: 'Wawancara', dot: '#60a5fa' },
+  dikirim:   { bg: '#1a1a1a', color: '#737373', icon: '', label: 'Dikirim',    dot: '#525252' },
+  dilihat:   { bg: 'rgba(251,191,36,0.08)', color: '#fbbf24', icon: '', label: 'Dilihat',    dot: '#fbbf24' },
+  wawancara: { bg: 'rgba(59,130,246,0.08)', color: '#60a5fa', icon: '', label: 'Wawancara', dot: '#60a5fa' },
   diterima:  { bg: 'rgba(16,185,129,0.08)', color: '#10b981', icon: '✓', label: 'Diterima',   dot: '#10b981' },
   ditolak:   { bg: 'rgba(239,68,68,0.08)', color: '#f87171', icon: '✕', label: 'Ditolak',    dot: '#f87171' },
 }
@@ -270,8 +270,8 @@ export default function MyApplications() {
       <div className="flex gap-1 p-1 rounded-xl mb-6"
         style={{ background: '#161616', border: '1px solid rgba(255,255,255,0.06)' }}>
         {[
-          { key: 'lamaran', label: 'Lamaran', icon: '📋' },
-          { key: 'cv', label: 'CV Saya', icon: '📄' },
+          { key: 'lamaran', label: 'Lamaran', icon: '' },
+          { key: 'cv', label: 'CV Saya', icon: '' },
         ].map(tab => (
           <button
             key={tab.key}
@@ -302,7 +302,7 @@ export default function MyApplications() {
           {toast && (
             <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl mb-5 text-sm font-medium fade-up"
               style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981' }}>
-              <span>🔔</span>
+              <span></span>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-white text-xs mb-0.5">Notifikasi Realtime</p>
                 <p className="text-xs sm:text-sm truncate">{toast}</p>
