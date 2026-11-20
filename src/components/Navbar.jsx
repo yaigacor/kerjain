@@ -21,21 +21,28 @@ export default function Navbar() {
     ? { to: '/admin', label: 'Admin Panel' }
     : null
 
+  // Tautan "Lowongan" hanya untuk pengunjung dan pencari kerja
+  const showBrowse = !user || profile?.role === 'pencari_kerja'
+  // Logo mengarah ke dashboard masing-masing untuk perusahaan dan admin
+  const homeTo = (profile?.role === 'perusahaan' || profile?.role === 'admin') ? roleLink.to : '/'
+
   return (
     <nav className="nav-blur sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-5 h-14 flex items-center gap-6">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-0.5 font-bold text-lg shrink-0 tracking-tight">
+        <Link to={homeTo} className="flex items-center gap-0.5 font-bold text-lg shrink-0 tracking-tight">
           <span className="text-white">Kerjain</span>
           <span style={{ color: '#10b981' }}>.</span>
         </Link>
 
         {/* Desktop nav */}
         <div className="hidden sm:flex items-center gap-1 flex-1">
-          <Link to="/" className="px-3 py-1.5 text-sm font-medium text-neutral-500 hover:text-white rounded-lg hover:bg-white/5 transition-all">
-            Lowongan
-          </Link>
+          {showBrowse && (
+            <Link to="/" className="px-3 py-1.5 text-sm font-medium text-neutral-500 hover:text-white rounded-lg hover:bg-white/5 transition-all">
+              Lowongan
+            </Link>
+          )}
           {roleLink && (
             <Link to={roleLink.to} className="px-3 py-1.5 text-sm font-medium text-neutral-500 hover:text-white rounded-lg hover:bg-white/5 transition-all">
               {roleLink.label}
@@ -92,7 +99,9 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="sm:hidden px-5 py-4 space-y-1 section-divider" style={{ background: 'rgba(10,10,10,0.98)' }}>
-          <Link to="/" onClick={() => setMenuOpen(false)} className="block py-2.5 px-3 text-sm font-medium text-neutral-400 hover:text-white rounded-lg hover:bg-white/5">Lowongan</Link>
+          {showBrowse && (
+            <Link to="/" onClick={() => setMenuOpen(false)} className="block py-2.5 px-3 text-sm font-medium text-neutral-400 hover:text-white rounded-lg hover:bg-white/5">Lowongan</Link>
+          )}
           {roleLink && (
             <Link to={roleLink.to} onClick={() => setMenuOpen(false)} className="block py-2.5 px-3 text-sm font-medium text-neutral-400 hover:text-white rounded-lg hover:bg-white/5">{roleLink.label}</Link>
           )}

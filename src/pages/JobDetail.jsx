@@ -113,7 +113,7 @@ export default function JobDetail() {
           <div className="space-y-4">
             {job.companies?.deskripsi && (
               <div className="card p-5">
-                <h2 className="text-sm font-semibold text-white mb-3">🏢 {job.companies.nama}</h2>
+                <h2 className="text-sm font-semibold text-white mb-3"> {job.companies.nama}</h2>
                 <p className="text-neutral-600 text-xs leading-6">{job.companies.deskripsi}</p>
               </div>
             )}
