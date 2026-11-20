@@ -346,7 +346,7 @@ export default function MyApplications() {
               </div>
             ) : items.length === 0 ? (
               <div className="card rounded-2xl py-14 sm:py-20 text-center">
-                <div className="text-3xl sm:text-4xl mb-3 opacity-30">📭</div>
+                <div className="text-3xl sm:text-4xl mb-3 opacity-30"></div>
                 <p className="text-white font-semibold text-sm sm:text-base">Belum Ada Lamaran</p>
                 <p className="text-neutral-600 text-xs sm:text-sm mt-2 mb-5">Mulai eksplorasi lowongan yang menunggumu</p>
                 <Link to="/" className="btn-accent text-sm py-2.5 px-6 inline-block">

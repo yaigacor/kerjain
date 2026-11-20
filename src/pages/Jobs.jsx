@@ -228,7 +228,7 @@ export default function Jobs() {
               </div>
             ) : jobs.length === 0 ? (
               <div className="card rounded-2xl py-16 sm:py-20 text-center">
-                <div className="text-4xl mb-4 opacity-40">🔍</div>
+                <div className="text-4xl mb-4 opacity-40"></div>
                 <p className="text-white font-semibold text-sm sm:text-base">Tidak Ada Hasil</p>
                 <p className="text-neutral-600 text-xs sm:text-sm mt-2">Coba kata kunci atau filter berbeda</p>
                 <button onClick={() => { setQ(''); setKategori('') }} className="mt-5 btn-ghost text-sm py-2 px-5">
