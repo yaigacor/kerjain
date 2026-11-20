@@ -8,8 +8,10 @@ import Register from './pages/Register'
 import Jobs from './pages/Jobs'
 import JobDetail from './pages/JobDetail'
 import MyApplications from './pages/pencari/MyApplications'
+import Profil from './pages/pencari/Profil'
 import CompanyDashboard from './pages/perusahaan/CompanyDashboard'
 import AdminVerify from './pages/admin/AdminVerify'
+import NotFound from './pages/NotFound'
 
 export default function App() {
   const [loaded, setLoaded] = useState(false)
@@ -22,7 +24,7 @@ export default function App() {
           opacity: loaded ? 1 : 0,
           transition: 'opacity 0.4s ease',
           minHeight: '100vh',
-          background: '#0a0a0a',
+          background: 'var(--bg)',
         }}
       >
         <Navbar />
@@ -35,12 +37,17 @@ export default function App() {
           <Route path="/lamaran" element={
             <ProtectedRoute roles={['pencari_kerja']}><MyApplications /></ProtectedRoute>
           } />
+          <Route path="/profil" element={
+            <ProtectedRoute roles={['pencari_kerja']}><Profil /></ProtectedRoute>
+          } />
           <Route path="/perusahaan" element={
             <ProtectedRoute roles={['perusahaan']}><CompanyDashboard /></ProtectedRoute>
           } />
           <Route path="/admin" element={
             <ProtectedRoute roles={['admin']}><AdminVerify /></ProtectedRoute>
           } />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </>
